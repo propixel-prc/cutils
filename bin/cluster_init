@@ -1,0 +1,22 @@
+#!/bin/bash
+cdir=`echo \`dirname $0\`|awk -v pwd=\`pwd\` '{if($0 ~ /^\//) {print $0} else {print pwd "/" $0}}'`
+cutils_dir=$cdir/../../cutils
+source $cutils_dir/bin/utils/common.sh
+
+upd=`upd`
+user=`user`
+local_ip=`get_local_ip em0`
+
+### creare user account on all node ###
+$cutils_dir/bin/utils/add_user.sh
+
+### deploy cutils on all nodes ###
+cutils_deploy_dir=`mktemp -u`
+echo $cutils_deploy_dir
+
+copy_to_remote $user $upd $local_ip $cutils_dir $cutils_deploy_dir
+#$cutils_deploy_dir/bin/utils/deploy_cutils.sh $cutils_deploy_dir
+rcmd $user $upd $local_ip "$cutils_deploy_dir/bin/utils/deploy_cutils.sh $cutils_deploy_dir"
+rcmd $user $upd $local_ip "$cutils_deploy_dir/bin/utils/ssh_nopass.sh"
+
+### End of Script ###

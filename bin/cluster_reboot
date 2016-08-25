@@ -1,0 +1,31 @@
+#!/bin/bash
+
+cdir=`echo \`dirname $0\`|awk -v pwd=\`pwd\` '{if($0 ~ /^\//) {print $0} else {print pwd "/" $0}}'`
+cutils_dir=$cdir/..
+source $cutils_dir/bin/utils/common.sh
+
+#p1: remote node IP
+reboot() {
+node_ip=$1
+echo "rebooting $node_ip ..."
+rcmd `root` `rpd` $node_ip "reboot"
+}
+
+#main entry
+self_reboot=0
+#reboot all remote nodes
+while read node
+do
+is_local_ip $node
+if [ $? -eq 0 ]; then
+  reboot $node
+else
+  self_reboot=1
+fi
+done < `nodes`
+
+#reboot itself if necessary
+if [ $self_reboot -eq 1 ]; then
+  echo `rpd`|sudo reboot
+fi
+#end of main

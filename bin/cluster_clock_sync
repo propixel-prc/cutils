@@ -1,0 +1,31 @@
+#!/bin/bash
+
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+# If system clocks are not aligned among servers(it means big gaps exist)
+# spark will fail to run and gives complaints like below:
+#
+# org.apache.hadoop.yarn.exceptions.YarnException: Unauthorized request to 
+# start container.
+# This token is expired. current time is 1470028841802 found 1470003447415
+# at sun.
+#--------------------------------------------------------------------------
+cdir=`echo \`dirname $0\`|awk -v pwd=\`pwd\` '{if($0 ~ /^\//) {print $0} else {print pwd "/" $0}}'`
+cutils_dir=$cdir/..
+source $cutils_dir/bin/utils/common.sh
+
+#p1: remote node IP
+clock_sync() {
+local node_ip=$1
+local clock=$2
+rcmd `root` `rpd` $node_ip "date -s \"$clock\""
+}
+
+#main entry
+local_clock=`date`
+echo "local_clock:$local_clock"
+while read node
+do
+echo $node
+clock_sync $node "$local_clock"
+done  < `nodes`
+#end of main
