@@ -10,3 +10,6 @@ do
 rcmd `user` `upd` $node "$cutils_dir/bin/utils/sshkey_broadcast.sh"
 done  < `nodes`
 ###end of main
+
+
+### End of Script ###

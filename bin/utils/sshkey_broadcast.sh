@@ -10,3 +10,5 @@ node_list=`cat \`nodes\`|awk '{printf $1" "}'`
 key_gen
 key_broadcast "$node_list" `user` `upd`
 ###end of main
+
+### End of Script ###

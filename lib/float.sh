@@ -16,3 +16,4 @@ local result=`echo ""|awk -v numerator=$numerator -v denominator=$denominator '{
 echo "$result"
 }
 
+### End of Script ###
