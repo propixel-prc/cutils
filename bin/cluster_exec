@@ -1,5 +1,30 @@
 #!/bin/bash
 
 ### run the script on the node as specified by hostname
+cdir=`echo \`dirname $0\`|awk -v pwd=\`pwd\` '{if($0 ~ /^\//) {print $0} else {print pwd "/" $0}}'`
+cutils_dir=$cdir/..
+source $cutils_dir/bin/utils/common.sh
 
-### End of Script ### 
+exec_all=$1
+script=$cutils_dir/scripts/$2
+
+shift 2
+args=$*
+
+echo "script=$script args=$args"
+#exit
+
+#main entry
+#all remote nodes
+if [ "all" = "$exec_all" ]; then
+while read node
+do
+rcmd `root` `rpd` $node $script "$cutils_dir/scripts $args"
+done < `nodes`
+
+else
+rcmd `root` `rpd` $node $script "$cutils_dir/scripts $args"
+fi
+#end of main
+
+### End of Script ###
